@@ -9,6 +9,9 @@ public class LaboOpdrachtB {
         int[] arriveTimes = {12, 31, 63, 95, 99, 154, 198, 221, 304, 346, 411, 455, 537};
         int[] serviceTimes = {40, 32, 55, 48, 18, 50, 47, 18, 28, 54, 40, 72, 12};
 
+        //number of servers in the system
+        int numberOfServers = 2;
+
         Queue<Customer> customerQueue = new PriorityQueue<>();
         List<Customer> customerList = new ArrayList<>();
 
@@ -30,45 +33,35 @@ public class LaboOpdrachtB {
             customerList.remove(tempCustomer);
         }
 
-        Server firstServer = new Server();
-        Server secondServer = new Server();
-
-        List<Customer> waitingQueue =  new ArrayList<>();
-
-        //exercise b
-        for (int i = 0; i < arriveTimes[arriveTimes.length-1]; i++) {
-            if(!customerQueue.isEmpty() && i == customerQueue.peek().getArriveTime()){
-                waitingQueue.add(customerQueue.remove());
-            }
-
-            if(!waitingQueue.isEmpty() && firstServer.serviceAvailable(waitingQueue.get(0),i)){
-                System.out.println("First Server:");
-                firstServer.nextCustomer(waitingQueue.remove(0));
-            }
-
-            if(!waitingQueue.isEmpty() && secondServer.serviceAvailable(waitingQueue.get(0),i)){
-                System.out.println("Second Server:");
-                secondServer.nextCustomer(waitingQueue.remove(0));
-            }
+        //making the servers
+        List<Server> serverList = new ArrayList<>();
+        for(int i = 0; i < numberOfServers ; i++){
+            serverList.add(new Server());
         }
 
-/*
-        //exercise c
+        //the waiting line
+        List<Customer> waitingList =  new ArrayList<>();
+
+        //checking every time unit
         for (int i = 0; i < arriveTimes[arriveTimes.length-1]; i++) {
+
+            //if a customer arrives add him to the waiting list
             if(!customerQueue.isEmpty() && i == customerQueue.peek().getArriveTime()){
-                waitingQueue.add(customerQueue.remove());
+                waitingList.add(customerQueue.remove());
             }
 
-            if(!waitingQueue.isEmpty() && firstServer.serviceAvailable(waitingQueue.get(waitingQueue.size()-1),i)){
-                System.out.println("First Server:");
-                firstServer.nextCustomer(waitingQueue.remove(waitingQueue.size()-1));
+            //every server checks if there is a customer and if the server is not already busy with a customer at that point in time (i time units)
+            for(int j = 0; j < serverList.size(); j++){
+                if(!waitingList.isEmpty() && serverList.get(j).serviceAvailable(waitingList.get(0),i)){
+                    System.out.println("Server " + (j+1) +":");
+                    serverList.get(j).nextCustomer(waitingList.remove(0));
+                }
             }
-            if(!waitingQueue.isEmpty() && secondServer.serviceAvailable(waitingQueue.get(waitingQueue.size()-1),i)){
-                System.out.println("Second Server:");
-                secondServer.nextCustomer(waitingQueue.remove(waitingQueue.size()-1));
-            }
+
         }
-*/
+
+
+
         System.out.println("--------------------------System finished--------------------------");
     }
 }
